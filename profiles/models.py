@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class Profile(models.Model):
-    creator = models.OneToOneField(User, on_delete=models.CASCADE)
+    owner = models.OneToOneField(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=255 , blank=True)
@@ -22,12 +22,12 @@ class Profile(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.creator}'s profile"
+        return f"{self.owner}'s profile"
 
 # Function for creating a profile, when a new user is created
 def create_profile(sender, instance, created, **kwargs):
     if created:
-        Profile.objects.create(creator=instance)
+        Profile.objects.create(owner=instance)
 
 # This is a signal to watch for a new user registering 
 # It will then create a profile 
