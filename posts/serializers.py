@@ -3,10 +3,10 @@ from posts.models import Post
 
 
 class PostSerializer(serializers.ModelSerializer):
-    creator = serializers.ReadOnlyField(source='creator.username')
-    is_creator = serializers.SerializerMethodField()
-    profile_id = serializers.ReadOnlyField(source='creator.profile.id')
-    profile_image = serializers.ReadOnlyField(source='creator.profile.image.url')
+    owner = serializers.ReadOnlyField(source='owner.username')
+    is_owner = serializers.SerializerMethodField()
+    profile_id = serializers.ReadOnlyField(source='owner.profile.id')
+    profile_image = serializers.ReadOnlyField(source='owner.profile.image.url')
 
     def validate_image(self, value):
         if value.size > 2 * 1024 * 1024:
@@ -21,14 +21,14 @@ class PostSerializer(serializers.ModelSerializer):
             )
         return value
 
-    def get_is_creator(self, obj):
+    def get_is_owner(self, obj):
         request = self.context['request']
-        return request.user == obj.creator
+        return request.user == obj.owner
 
     class Meta:
         model = Post
         fields = [
-            'id', 'creator', 'is_creator', 'profile_id',
+            'id', 'owner', 'is_owner', 'profile_id',
             'profile_image', 'created_at', 'updated_at',
             'title', 'content', 'image', 'image_filter'
         ]

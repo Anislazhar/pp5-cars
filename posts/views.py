@@ -25,7 +25,7 @@ class PostList(APIView):
             data=request.data, context={'request': request}
         )
         if serializer.is_valid():
-            serializer.save(creator=request.user)
+            serializer.save(owner=request.user)
             return Response(
                 serializer.data, status=status.HTTP_201_CREATED
             )
