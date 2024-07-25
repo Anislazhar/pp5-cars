@@ -61,7 +61,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'DEV' in os.environ
 
-ALLOWED_HOSTS = ['8000-anislazhar-pp5cars-052kwt70f3n.ws-eu115.gitpod.io', 'cars-api-app.herokuapp.com']
+ALLOWED_HOSTS = ['8000-anislazhar-pp5cars-052kwt70f3n.ws-eu115.gitpod.io', 'https://cars-api-app-48918ef0d803.herokuapp.com']
 CSRF_TRUSTED_ORIGINS = ['https://8000-anislazhar-pp5cars-052kwt70f3n.ws-eu115.gitpod.io']
 
 
