@@ -1,23 +1,27 @@
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from rest_framework import serializers
-from .models import Comment
+from .models import Comments, Ratings
+
+class RatingSerializer(serializers.ModelSerializer):
+    # THis needs to be the same as the comments serializer and should be user
+    creator = serializers.ReadOnlyField(source='creator.username')
+    class Meta:
+        model = Ratings
+        fields = ('id', 'creator', 'build', 'rating_value')
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the Comment model
-    Adds three extra fields when returning a list of Comment instances
-    """
-    owner = serializers.ReadOnlyField(source='owner.username')
-    is_owner = serializers.SerializerMethodField()
-    profile_id = serializers.ReadOnlyField(source='owner.profile.id')
-    profile_image = serializers.ReadOnlyField(source='owner.profile.image.url')
+    creator = serializers.ReadOnlyField(source='creator.username')
+    is_creator = serializers.SerializerMethodField()
+    profile_id = serializers.ReadOnlyField(source='creator.id')
+    profile_image = serializers.ReadOnlyField(source='creator.profile.image.url')
     created_at = serializers.SerializerMethodField()
     updated_at = serializers.SerializerMethodField()
+    rating = RatingSerializer(many=False, read_only=True)
 
-    def get_is_owner(self, obj):
+    def get_is_creator(self, obj):
         request = self.context['request']
-        return request.user == obj.owner
+        return request.user == obj.creator
 
     def get_created_at(self, obj):
         return naturaltime(obj.created_at)
@@ -26,16 +30,12 @@ class CommentSerializer(serializers.ModelSerializer):
         return naturaltime(obj.updated_at)
 
     class Meta:
-        model = Comment
-        fields = [
-            'id', 'owner', 'is_owner', 'profile_id', 'profile_image',
-            'post', 'created_at', 'updated_at', 'content'
-        ]
-
+        model = Comments
+        fields = (
+            'id', 'creator',  'profile_id',
+            'content', 'profile_image', 'build', 'is_creator', 'created_at', 'updated_at', 'rating',
+        )
 
 class CommentDetailSerializer(CommentSerializer):
-    """
-    Serializer for the Comment model used in Detail view
-    Post is a read only field so that we dont have to set it on each update
-    """
-    post = serializers.ReadOnlyField(source='post.id')
+    build = serializers.ReadOnlyField(source='build.id')
+

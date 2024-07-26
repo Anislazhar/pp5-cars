@@ -1,0 +1,17 @@
+from rest_framework import generics, permissions
+from cars_api.permissions import IsOwnerOrReadOnly
+from user_save.models import Save
+from user_save.serializers import SaveSerializer
+
+class SaveList(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    serializer_class = SaveSerializer
+    queryset = Save.objects.all()
+
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
+
+class SaveDetail(generics.RetrieveDestroyAPIView):
+    permission_classes = [IsOwnerOrReadOnly]
+    serializer_class = SaveSerializer
+    queryset = Save.objects.all()
