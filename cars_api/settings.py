@@ -18,10 +18,15 @@ import re
 if os.path.exists('env.py'):
     import env
 
+
 CLOUDINARY_STORAGE = {
-    'CLOUDINARY_URL': os.environ.get('CLOUDINARY_URL')
+    'CLOUDINARY_URL': os.environ.get('CLOUDINARY_URL'),
+    'CLOUDINARY_API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'CLOUDINARY_CLOUD_NAME': os.environ.get('CLOUDINARY_NAME'),
 }
+
 MEDIA_URL = '/media/'
+
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -33,11 +38,10 @@ REST_FRAMEWORK = {
         if 'DEV' in os.environ
         else 'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
     )],
-    'DEFAULT_PAGINATION_CLASS':
-    'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10,
+    'DEFAULT_PAGINATION_CLASS':'rest_framework.pagination.PageNumberPagination','PAGE_SIZE': 10,
     'DATETIME_FORMAT': '%d %b %Y',
 }
+
 if 'DEV' not in os.environ:
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = [
         'rest_framework.renderers.JSONRenderer',
@@ -45,7 +49,7 @@ if 'DEV' not in os.environ:
 
 REST_USE_JWT = True
 JWT_AUTH_SECURE = True
-JWT_AUTH_COOKIE = 'my-app-auth'
+JWT_AUTH_COOKIE = 'my-auth-app'
 JWT_AUTH_REFRESH_COOKIE = 'my-refresh-token'
 JWT_AUTH_SAMESITE = 'None'
 
@@ -76,23 +80,22 @@ INSTALLED_APPS = [
     'cloudinary_storage',
     'django.contrib.staticfiles',
     'cloudinary',
+    'profiles',
     'rest_framework',
     'django_filters',
     'rest_framework.authtoken',
-    'dj_rest_auth',
     'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'dj_rest_auth.registration',
+    'dj_rest_auth',
     'corsheaders',
-
     'builds',
-    'user_save',
-    'cms',
-    'profiles',
     'comments',
     'followers',
+    'user_save',
+    'cms',
 ]
 
 SITE_ID = 1
@@ -118,7 +121,7 @@ CORS_ALLOW_CREDENTIALS = True
 # Had to Add to resolve various CORS issues
 CORS_ALLOWED_ORIGINS = [
     'https://3000-anislazhar-mycars-cquyyrnk014.ws-eu115.gitpod.io',
-    'https://my-car-a464784ae806.herokuapp.com/'
+    'https://my-car-a464784ae806.herokuapp.com'
 ]
 
 
@@ -156,8 +159,7 @@ WSGI_APPLICATION = 'cars_api.wsgi.application'
 # else:
 DATABASES = {
     'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
-    }
-
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
