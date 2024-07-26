@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+import re
 
 if os.path.exists('env.py'):
     import env
@@ -59,11 +60,10 @@ REST_AUTH_SERIALIZERS = {
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'DEV' in os.environ
 
-ALLOWED_HOSTS = ['8000-anislazhar-pp5cars-052kwt70f3n.ws-eu115.gitpod.io', 'cars-api-app-48918ef0d803.herokuapp.com']
-CSRF_TRUSTED_ORIGINS = ['https://8000-anislazhar-pp5cars-052kwt70f3n.ws-eu115.gitpod.io','https://cars-api-app-48918ef0d803.herokuapp.com']
+DEBUG = False
 
+ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOST'), '.gitpod.io', 'localhost', 'cars-api-app-48918ef0d803.herokuapp.com', '.herokuapp.com']
 
 # Application definition
 
@@ -108,16 +108,18 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-if 'CLIENT_ORIGIN' in os.environ:
-    CORS_ALLOWED_ORIGINS = [
-        os.environ.get('CLIENT_ORIGIN')
-     ]
-else:
+if 'CLIENT_ORIGIN_DEV' in os.environ:
+    extracted_url = re.match(r'^.+-', os.environ.get('CLIENT_ORIGIN_DEV', ''), re.IGNORECASE).group(0)
     CORS_ALLOWED_ORIGIN_REGEXES = [
-        r"^https://.*\.gitpod\.io$",
+        rf"{extracted_url}(eu|us)\d+\w\.gitpod\.io$",
     ]
-
 CORS_ALLOW_CREDENTIALS = True
+
+# Had to Add to resolve various CORS issues
+CORS_ALLOWED_ORIGINS = [
+    'https://3000-anislazhar-mycars-cquyyrnk014.ws-eu115.gitpod.io',
+    'https://my-car-a464784ae806.herokuapp.com/'
+]
 
 
 ROOT_URLCONF = 'cars_api.urls'
@@ -144,16 +146,16 @@ WSGI_APPLICATION = 'cars_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-if 'DEV' in os.environ:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-else:
-    DATABASES = {
-         'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
+# if 'DEV' in os.environ:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': BASE_DIR / 'db.sqlite3',
+#         }
+#     }
+# else:
+DATABASES = {
+    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
     }
 
 
